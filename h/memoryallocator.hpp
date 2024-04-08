@@ -1,5 +1,5 @@
-#ifndef _memoryallocator_h_
-#define _memoryallocator_h_
+#ifndef _memoryallocator_hpp_
+#define _memoryallocator_hpp_
 
 #include "../lib/hw.h"
 #include "../lib/console.h"

@@ -1,7 +1,7 @@
 #include "../lib/console.h"
 #include "../lib/hw.h"
-#include "../h/memoryallocator.h"
-#include "../h/printf.h"
+#include "../h/memoryallocator.hpp"
+#include "../h/printf.hpp"
 
 void main(){
     int* ret = (int*) MemoryAllocator::kernel_mem_alloc(10); //10blokiova

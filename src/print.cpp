@@ -1,4 +1,4 @@
-#include "../h/printf.h"
+#include "../h/printf.hpp"
 
 /* printing int, long, string,   char,  hexa value
             %d,    %l,     %s,    %c    %x
