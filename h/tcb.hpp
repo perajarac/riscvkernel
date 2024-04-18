@@ -1,49 +1,46 @@
 #ifndef _tcb_hpp_
 #define _tcb_hpp_
 
-#pragma once
+#include "../h/memoryallocator.hpp"
 
-#include "MemoryAllocator.hpp"
-
-class Thread
+class TCB
 {
-
-    using Body = void (*)(void *);
-
-    static void initialize();
-    Thread(Body body, void *args, void *stack_space = MemoryAllocator::kmalloc(DEFAULT_STACK_SIZE), uint64 timeSlice = DEFAULT_TIME_SLICE);
-    ~Thread();
-
-    static Thread *running;
-    void start();
-    static void runner();
-    static void dispatch();
-    static void timerInterrupt();
-
-    static void join(Thread *thread);
+    TCB(Body body, void *args, void *stack_space = MemoryAllocator::kernel_mem_alloc(DEFAULT_STACK_SIZE), uint64 time_slice = DEFAULT_TIME_SLICE);
+    ~TCB();
 
     enum State
     {
         CREATED,
         READY,
-        RUNNING, // runnable
+        RUNNABLE, // runnable
         SUSPENDED,
         SLEEPING,
         FINISHED, // blocked
     };
     State state = CREATED;
-    void setState(State s) { state = s; }
-    bool finished() { return state == FINISHED; }
 
-    uint64 sleepThreshold = 0;
-    void setSleepThreshold(uint64 time) { sleepThreshold = time; }
+    using Body = void (*)(void *);
+
+    static TCB *running;
+    void start();
+    static void runner();
+    static void dispatch();
+    //TODO: static void timerInterrupt();
+
+    static void join(TCB *thread);
+
+    uint64 sleep_limit = 0;
+    void setSleepThreshold(uint64 time) { sleepLimit = time; }
+
+    void setState(State s) { state = s; }
+    bool isFinished() {return state == FINISHED; }
 
     Body body;
     void *args;
     void *stack_space;
 
-    const uint64 timeSlice;
-    static uint64 timeSliceCounter;
+    const uint64 time_slice;
+    static uint64 time_slice_counter;
 
     bool privileged = false;
 
@@ -57,11 +54,11 @@ class Thread
     Context context;
 
     //switch context
-    static void conswtch(Thread::Context *oldContext, Thread::Context *newContext);
+    static void conswtch(TCB::Context *old, TCB::Context *new);
 
     // memory allocation
-    Thread* operator new(size_t size);
-    Thread operator delete(void *ptr);
+    TCB* operator new(size_t size);
+    TCB operator delete(void *ptr);
 
     // system call handlers
     static void sc_thread_create();
