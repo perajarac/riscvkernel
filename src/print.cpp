@@ -1,8 +1,5 @@
 #include "../h/printf.hpp"
 
-/* printing int, long, string,   char,  hexa value
-            %d,    %l,     %s,    %c    %x
-*/
 
 void printf(char const *format, void *argument)
 {

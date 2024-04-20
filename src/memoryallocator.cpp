@@ -2,19 +2,15 @@
 
 FreeMemory *MemoryAllocator::head = nullptr;
 
-bool MemoryAllocator::isInitialized = false;
+void MemoryAllocator::initialize(){
+    head = (FreeMemory *)((size_t)HEAP_START_ADDR);
+    head->size = ((size_t)((size_t *)HEAP_END_ADDR - (size_t *)HEAP_START_ADDR)) / MEM_BLOCK_SIZE;
+    head->next = nullptr;
+    head->prev = nullptr;
+}
 
 void *MemoryAllocator::kernel_mem_alloc(size_t sz)
 {
-    if (!isInitialized)
-    {
-        isInitialized = true;
-        head = (FreeMemory *)((size_t)HEAP_START_ADDR);
-        head->size = ((size_t)((size_t *)HEAP_END_ADDR - (size_t *)HEAP_START_ADDR)) / MEM_BLOCK_SIZE;
-        head->next = nullptr;
-        head->prev = nullptr;
-    }
-
     void *ret = nullptr;
 
     for (FreeMemory *temp = head; temp; temp = temp->next)
@@ -54,7 +50,7 @@ void *MemoryAllocator::kernel_mem_alloc(size_t sz)
 int MemoryAllocator::kernel_mem_free(void *adr)
 {
     if ((size_t *)adr > (size_t *)HEAP_END_ADDR || (size_t *)adr < (size_t *)HEAP_START_ADDR)
-        return -1;
+        return 3; //ERROR
 
     adr = reinterpret_cast<void *>(reinterpret_cast<size_t>(adr) - MEM_BLOCK_SIZE);
 
@@ -143,4 +139,17 @@ void MemoryAllocator::printFM(FreeMemory *head, int a)
     {
         __putc(buffer[--i]);
     }
+}
+
+void MemoryAllocator::syscall_kfree()
+{
+    void* addr = (void*) RiscV::r_a1();
+    uint64 ret = kernel_mem_free(addr);
+    RiscV::w_a0(ret);
+}
+
+void MemoryAllocator::syscall_kmalloc() {
+    size_t blocks = (size_t) RiscV::r_a1();
+    void* addr = kernel_mem_alloc(blocks);
+    RiscV::w_a0((uint64)addr);
 }

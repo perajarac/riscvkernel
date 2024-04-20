@@ -5,6 +5,24 @@
 
 class TCB
 {
+    struct Context
+    {
+        uint64 sp;
+        uint64 ra;
+    };
+    Context context;
+
+    using Body = void (*)(void *);
+
+    Body body;
+    void *args;
+    void *stack_space;
+
+    const uint64 time_slice;
+    static uint64 time_slice_counter;
+
+    bool privileged = false;
+
     TCB(Body body, void *args, void *stack_space = MemoryAllocator::kernel_mem_alloc(DEFAULT_STACK_SIZE), uint64 time_slice = DEFAULT_TIME_SLICE);
     ~TCB();
 
@@ -18,8 +36,6 @@ class TCB
         FINISHED, // blocked
     };
     State state = CREATED;
-
-    using Body = void (*)(void *);
 
     static TCB *running;
     void start();
@@ -35,23 +51,6 @@ class TCB
     void setState(State s) { state = s; }
     bool isFinished() {return state == FINISHED; }
 
-    Body body;
-    void *args;
-    void *stack_space;
-
-    const uint64 time_slice;
-    static uint64 time_slice_counter;
-
-    bool privileged = false;
-
-    uint64 savedSP = 0;
-
-    struct Context
-    {
-        uint64 sp;
-        uint64 ra;
-    };
-    Context context;
 
     //switch context
     static void conswtch(TCB::Context *old, TCB::Context *new);

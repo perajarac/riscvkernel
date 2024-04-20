@@ -9,28 +9,25 @@
 #define SSTATUS_SIE (1L << 1)       // Supervisor Interrupt Enable
 #define SSTATUS_UIE (1L << 0)       // User Interrupt Enable
 
-
-//BNT = 0
-#define SCAUSE_IS 2 //instruction fault
-#define SCAUSE_LAF 5 //read access fault
-#define SCAUSE_WAF 7 //store access fault
+// BNT = 0
+#define SCAUSE_IS 2  // instruction fault
+#define SCAUSE_LAF 5 // read access fault
+#define SCAUSE_WAF 7 // store access fault
 #define SCAUSE_USER 8
 #define SCAUSE_SYSTEM 9
 
-//BNT = 1
+// BNT = 1
 #define SCAUSE_TIMER 1
 #define SCAUSE_CONSOLE 9
 
 class RiscV
 {
 public:
-  //defined in .cpp
-  void handle_routine();
-  static uint64 r_a(REG);
-  static void w_a0(uint64 a0);
+  // defined in .cpp
+  static void handleTrap();
+  static void supervisorTrap();
 
-
-  //inlines
+  // inlines
 
   static uint64 r_sstatus();
 
@@ -65,6 +62,14 @@ public:
   static void mc_sip(uint64 mask);
 
   static uint64 r_sscratch();
+
+  static uint64 r_a0();
+
+  static void w_a0(uint64 x);
+
+  static uint64 r_a1();
+
+  static void w_a1(uint64 x);
 
   static void inte(); // enabling intterupts
   static void intd(); // disabling intterupts
@@ -177,6 +182,30 @@ inline uint64 RiscV::r_sscratch()
   uint64 volatile x;
   __asm__ volatile("csrr %0, sscratch" : "=r"(x));
   return x;
+}
+
+inline uint64 RiscV::r_a0()
+{
+  uint64 volatile x;
+  __asm__ volatile("mv %0, a0" : "=r"(x));
+  return x;
+}
+
+inline void RiscV::w_a0(uint64 x)
+{
+  __asm__ volatile("mv a0, %0" : : "r"(x));
+}
+
+inline uint64 RiscV::r_a1()
+{
+  uint64 volatile x;
+  __asm__ volatile("mv %0, a1" : "=r"(x));
+  return x;
+}
+
+inline void RiscV::w_a1(uint64 x)
+{
+  __asm__ volatile("mv a1, %0" : : "r"(x));
 }
 
 #endif
