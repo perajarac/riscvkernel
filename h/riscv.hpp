@@ -1,6 +1,8 @@
 #ifndef riscv_h_
 #define riscv_h_
 #include "../lib/hw.h"
+#include "../h/memoryallocator.hpp"
+#include "../lib/console.h"
 
 #define SCAUSE_INTTERUPT (1L << 63) // Upper scause bit(decides if interrupt is outside or inside)
 #define SSTATUS_SPP (1L << 8)       // Previous mode, 1=Supervisor, 0=User

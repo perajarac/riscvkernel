@@ -1,5 +1,4 @@
 #include "../h/riscv.hpp"
-#include "../h/memoryallocator.hpp"
 
 void RiscV::handleTrap()
 {
@@ -18,11 +17,10 @@ void RiscV::handleTrap()
         }
 
         if (scause == SCAUSE_USER || scause == SCAUSE_SYSTEM){
-
+            uint64 op_code = r_a0();
             uint64 volatile sepc = r_sepc() + 4;
             uint64 volatile sstatus = r_sstatus();
 
-            uint64 op_code = r_a0();
 
             switch(op_code){
                 case(0x01):MemoryAllocator::syscall_kmalloc(); break;
@@ -43,6 +41,8 @@ void RiscV::handleTrap()
 
             w_sstatus(sstatus);
             w_sepc(sepc);
+
+            __asm__ volatile("nop");
             
         }
     }
