@@ -19,11 +19,8 @@ public:
     static void initialize();  //initialization of structures and pointers
 
     static void *kernel_mem_alloc(size_t sz);
-    static int kernel_mem_free(void *adr);
+    static uint32 kernel_mem_free(void *adr);
     static FreeMemory *head;
-
-    static void syscall_kmalloc();
-    static void syscall_kfree();
 
     static void printFreeList();
     static void printFHead();
