@@ -140,16 +140,3 @@ void MemoryAllocator::printFM(FreeMemory *head, int a)
         __putc(buffer[--i]);
     }
 }
-
-void MemoryAllocator::syscall_kfree(uint64 r1)
-{
-    void* addr = (void*) r1;
-    uint64 ret = kernel_mem_free(addr);
-    RiscV::w_a0(ret);
-}
-
-void MemoryAllocator::syscall_kmalloc(uint64 r1) {
-    size_t blocks = (size_t)r1;
-    void* addr = kernel_mem_alloc(blocks);
-    RiscV::w_a0((uint64)addr);
-}

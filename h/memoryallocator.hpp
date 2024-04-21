@@ -22,9 +22,6 @@ public:
     static uint32 kernel_mem_free(void *adr);
     static FreeMemory *head;
 
-    static void syscall_kmalloc(uint64 r1);
-    static void syscall_kfree(uint64 r1);
-
     static void printFreeList();
     static void printFHead();
 
