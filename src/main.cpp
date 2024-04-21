@@ -8,7 +8,7 @@ void main()
     MemoryAllocator::initialize();
     RiscV::w_stvec((uint64) RiscV::handleTrap);
     MemoryAllocator::printFreeList();
-    int *ret = new int[10];
+    int *ret =  new int(40);
     for(int i = 0; i < 10; i++)
     {
         *(ret + i) = i;

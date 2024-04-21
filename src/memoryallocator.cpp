@@ -47,7 +47,7 @@ void *MemoryAllocator::kernel_mem_alloc(size_t sz)
     return reinterpret_cast<void *>(reinterpret_cast<size_t>(ret) + MEM_BLOCK_SIZE);
 }
 
-int MemoryAllocator::kernel_mem_free(void *adr)
+uint32 MemoryAllocator::kernel_mem_free(void *adr)
 {
     if ((size_t *)adr > (size_t *)HEAP_END_ADDR || (size_t *)adr < (size_t *)HEAP_START_ADDR)
         return 3; //ERROR
@@ -141,15 +141,15 @@ void MemoryAllocator::printFM(FreeMemory *head, int a)
     }
 }
 
-void MemoryAllocator::syscall_kfree()
+void MemoryAllocator::syscall_kfree(uint64 r1)
 {
-    void* addr = (void*) RiscV::r_a1();
+    void* addr = (void*) r1;
     uint64 ret = kernel_mem_free(addr);
     RiscV::w_a0(ret);
 }
 
-void MemoryAllocator::syscall_kmalloc() {
-    size_t blocks = (size_t) RiscV::r_a1();
+void MemoryAllocator::syscall_kmalloc(uint64 r1) {
+    size_t blocks = (size_t)r1;
     void* addr = kernel_mem_alloc(blocks);
     RiscV::w_a0((uint64)addr);
 }
