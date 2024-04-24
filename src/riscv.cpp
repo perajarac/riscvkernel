@@ -42,3 +42,20 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4, ui
         }
     }
 }
+
+void RiscV::popSppSpie(){
+    if(TCB::running->status == TCB::Status::USER){
+        RiscV::mc_sstatus(SSTATUS_SPP);
+    }else{
+        RiscV::ms_sstatus(SSTATUS_SPP);
+    }
+    __asm__ volatile("csrw sepc, ra");
+    __asm__ volatile("sret");
+}
+
+void Riscv::setPrivilegeLevel() {
+    if (TCB::running->state == TCB::State::PRIVILEGED)
+        ms_sstatus(SSTATUS_SPP);
+    else
+        mc_sstatus(SSTATUS_SPP);
+}

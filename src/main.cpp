@@ -3,6 +3,7 @@
 #include "../h/printf.hpp"
 #include "../h/riscv.hpp"
 #include "../h/memoryallocator.hpp"
+#include "../h/scheduler.hpp"
 
 void main() {
     

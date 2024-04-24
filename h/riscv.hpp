@@ -28,6 +28,7 @@ public:
   // defined in .cpp
   static void handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4, uint64 a5);
   static void supervisorTrap();
+  static void popSppSpie();
 
   // inlines
 
@@ -75,6 +76,9 @@ public:
 
   static void inte(); // enabling intterupts
   static void intd(); // disabling intterupts
+
+  friend class TCB;
+
 };
 
 inline void RiscV::inte()
