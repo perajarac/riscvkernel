@@ -1,11 +1,8 @@
-#ifndef _scheduler_h_
-#define _scheduler_h_
+#ifndef _scheduler_hpp_
+#define _scheduler_hpp_
 
-#include "../h/riscv.hpp"
-#include "../h/tcb.hpp"
-#include "../h/queue.hpp"
-
-
+class TCB;
+class Queue;
 
 class Scheduler{
 
@@ -15,7 +12,5 @@ class Scheduler{
     static Queue q;
 
 };
-
-
 
 #endif

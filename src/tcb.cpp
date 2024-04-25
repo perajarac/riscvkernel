@@ -11,6 +11,9 @@ TCB::TCB(Body body, void *args, void* stack_space, uint64 timeSlice):
             (uint64) TCB::set_runner
         }) {}
 
+void TCB::start(){
+    Scheduler::put(this);
+}
 
 void TCB::set_runner() {
     RiscV::popSppSpie();
@@ -37,4 +40,23 @@ void* TCB::operator new(size_t size){
 
 void TCB::operator delete(void* ptr){
     MemoryAllocator::kernel_mem_free(ptr);
+}
+
+void TCB::syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4)
+{
+    TCB** thread_handle = (TCB**)r1;
+    Body start_routine = (Body)r2;
+    void* args = (void*)r3;
+    void* stack_space = (void*)r4;
+
+    TCB *temp = new TCB(start_routine, args, stack_space);
+
+    (*thread_handle) = newTCB;
+
+    if (temp) {
+        temp->start();
+        RiscV::w_a0(0);
+    } else {
+        RiscV::w_a0(-1);
+    }
 }

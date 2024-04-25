@@ -1,6 +1,6 @@
 #include "../h/riscv.hpp"
 
-void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4, uint64 a5)
+void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
 {
     volatile uint64 scause = RiscV::r_scause();
 
@@ -22,7 +22,7 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4, ui
             switch(op){
                 case(0x01): w_a0((uint64)MemoryAllocator::kernel_mem_alloc(a1)); break;
                 case(0x02): w_a0((uint64)MemoryAllocator::kernel_mem_free((void *)a1)); break;
-                case(0x11): break;
+                case(0x11): TCB::syscall_thread_create(r1,r2,r3,r4);break;
                 case(0x12): break;
                 case(0x13): break;
                 case(0x21): break;

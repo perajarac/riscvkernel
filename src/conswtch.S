@@ -1,4 +1,3 @@
-# void TCB::contextSwitch(TCB::Context* old, TCB::Context* new);
 .global _ZN3TCB8conswtchEPNS_7ContextES1_
 .type _ZN3TCB8conswtchEPNS_7ContextES1_, @function
 _ZN6Thread8conswtchEPNS_7ContextES1_:

@@ -2,7 +2,6 @@
 #define _memoryallocator_hpp_
 
 #include "../lib/hw.h"
-#include "../lib/console.h"
 #include "../h/riscv.hpp"
 #include "../h/printf.hpp"
 

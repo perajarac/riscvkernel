@@ -3,6 +3,7 @@
 #include "../lib/hw.h"
 #include "../h/memoryallocator.hpp"
 #include "../lib/console.h"
+#include "../h/tcb.hpp"
 
 #define SCAUSE_INTTERUPT (1L << 63) // Upper scause bit(decides if interrupt is outside or inside)
 #define SSTATUS_SPP (1L << 8)       // Previous mode, 1=Supervisor, 0=User
@@ -26,7 +27,7 @@ class RiscV
 {
 public:
   // defined in .cpp
-  static void handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4, uint64 a5);
+  static void handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4);
   static void supervisorTrap();
   static void popSppSpie();
 

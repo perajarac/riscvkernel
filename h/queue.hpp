@@ -1,16 +1,17 @@
-#ifndef _queue_h_
-#define _queue_h_
+#ifndef _queue_hpp_
+#define _queue_hpp_
 #include "../h/tcb.hpp"
 #include "../h/memoryallocator.hpp"
 
 
 class Queue{
-
 public:
 
     struct TCBS{
         TCB* tcb;
         TCBS* next;
+
+        TCBS(TCB* p):tcb(p),next(nullptr) {}
     };
     TCBS *head, *tail;
     
@@ -20,13 +21,7 @@ public:
     void put(TCBS* t);
     TCB* pop();
     TCB* get(TCBS* t){return t->tcb;}
+
 };
-
-
-
-
-
-
-
 
 #endif

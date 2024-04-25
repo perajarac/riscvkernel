@@ -1,8 +1,8 @@
 #ifndef _tcb_hpp_
 #define _tcb_hpp_
 
-#include "../h/memoryallocator.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/scheduler.hpp"
 
 class TCB
 {
@@ -48,12 +48,12 @@ class TCB
     void start();
     static void set_runner();
     static void dispatch();
-    //TODO: static void timerInterrupt();
+    //TODO: static void timer_interrupt();
 
     static void join(TCB *thread);
 
     uint64 sleep_limit = 0;
-    void setSleepThreshold(uint64 time) { sleep_limit = time; }
+    void set_sleep_time(uint64 time) { sleep_limit = time; }
 
     void setState(State s) { state = s; }
     bool isFinished() {return state == FINISHED; }
@@ -62,16 +62,15 @@ class TCB
     //switch context
     static void conswtch(TCB::Context *old, TCB::Context *neww);
 
-    // memory allocation
+    // memory allocation    
     void* operator new(size_t size);
     void operator delete(void *ptr);
 
     // system call handlers
-    static void sc_thread_create();
-    static void sc_thread_exit();
-    static void sc_thread_dispatch();
+    static void syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4);
+    static void syscall_thread_exit();
+    static void syscall_thread_dispatch();
 
-    // friends
     friend class RiscV;
 };
 
