@@ -6,9 +6,11 @@ class Queue;
 
 class Scheduler{
 
+public:
     static void put(TCB* tcb);
     static TCB* get();
 
+private:
     static Queue q;
 
 };

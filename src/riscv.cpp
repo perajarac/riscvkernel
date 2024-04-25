@@ -22,9 +22,9 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
             switch(op){
                 case(0x01): w_a0((uint64)MemoryAllocator::kernel_mem_alloc(a1)); break;
                 case(0x02): w_a0((uint64)MemoryAllocator::kernel_mem_free((void *)a1)); break;
-                case(0x11): TCB::syscall_thread_create(r1,r2,r3,r4);break;
-                case(0x12): break;
-                case(0x13): break;
+                case(0x11): TCB::syscall_thread_create(a1,a2,a3,a4);break;
+                case(0x12): TCB::syscall_thread_exit();break;
+                case(0x13): TCB::syscall_thread_dispatch();break;
                 case(0x21): break;
                 case(0x22): break;
                 case(0x23): break;
@@ -53,8 +53,8 @@ void RiscV::popSppSpie(){
     __asm__ volatile("sret");
 }
 
-void Riscv::setPrivilegeLevel() {
-    if (TCB::running->state == TCB::State::PRIVILEGED)
+void RiscV::setPrivilegeLevel() {
+    if (TCB::running->status == TCB::Status::PRIVILEGED)
         ms_sstatus(SSTATUS_SPP);
     else
         mc_sstatus(SSTATUS_SPP);

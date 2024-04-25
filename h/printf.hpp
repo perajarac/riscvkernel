@@ -5,6 +5,6 @@
 /* printing int, long, string,   char,  hexa value
             %d,    %l,     %s,    %c    %x
 */
-extern void printf(char const* format, void* argument);
+extern void printf(const char* format, void* argument= 0);
 
 #endif

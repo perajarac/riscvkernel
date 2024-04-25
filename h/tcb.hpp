@@ -1,17 +1,17 @@
 #ifndef _tcb_hpp_
 #define _tcb_hpp_
 
-#include "../h/syscall_c.hpp"
+#include "../h/riscv.hpp"
 #include "../h/scheduler.hpp"
 
 class TCB
 {
+public:
     struct Context
     {
         uint64 sp;
         uint64 ra;
     };
-    Context context;
 
     using Body = void (*)(void *);
 
@@ -19,14 +19,18 @@ class TCB
     void *args;
     void *stack_space;
 
-    const uint64 time_slice;
+    uint64 time_slice;
     static uint64 time_slice_counter;
+
+    Context context;
 
     enum Status{
         USER,
         PRIVILEGED
     };
     Status status = PRIVILEGED; // Status
+
+    
 
     TCB(Body body, void *args,
         void *stack_space = MemoryAllocator::kernel_mem_alloc((DEFAULT_STACK_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE), 

@@ -1,16 +1,15 @@
 #include "../h/printf.hpp"
 
 
-void printf(char const *format, void *argument)
+void printf(const char *format, void *argument)
 {
 
-    if (format == 0)
+    if (argument == 0)
     {
-        char *str = ((char *)argument);
-        while (*str != '\0')
+        while (*format != '\0')
         {
-            __putc(*str);
-            str++;
+            __putc(*format);
+            format++;
         }
         return;
     }

@@ -1,6 +1,6 @@
 .global _ZN3TCB8conswtchEPNS_7ContextES1_
 .type _ZN3TCB8conswtchEPNS_7ContextES1_, @function
-_ZN6Thread8conswtchEPNS_7ContextES1_:
+_ZN3TCB8conswtchEPNS_7ContextES1_:
 
     sd sp, 0(a0)
     sd ra, 8(a0)

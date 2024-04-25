@@ -1,8 +1,8 @@
 #ifndef riscv_h_
 #define riscv_h_
 #include "../lib/hw.h"
+#include "../h/printf.hpp"
 #include "../h/memoryallocator.hpp"
-#include "../lib/console.h"
 #include "../h/tcb.hpp"
 
 #define SCAUSE_INTTERUPT (1L << 63) // Upper scause bit(decides if interrupt is outside or inside)
@@ -30,6 +30,7 @@ public:
   static void handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3, uint64 a4);
   static void supervisorTrap();
   static void popSppSpie();
+  static void setPrivilegeLevel();
 
   // inlines
 

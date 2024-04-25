@@ -1,11 +1,12 @@
 #include "../h/tcb.hpp" 
 
-TCB* TCB::running = nullptr;;
+TCB* TCB::running = nullptr;
+uint64 TCB::time_slice_counter = 0;
 
 TCB::TCB(Body body, void *args, void* stack_space, uint64 timeSlice):
         body(body), args(args),
         stack_space(stack_space),
-        timeSlice(timeSlice),
+        time_slice(timeSlice),
         context({
             (uint64) ((uint8*)stack_space + DEFAULT_STACK_SIZE),
             (uint64) TCB::set_runner
@@ -18,17 +19,17 @@ void TCB::start(){
 void TCB::set_runner() {
     RiscV::popSppSpie();
     running->body(running->args);
-    thread_exit();
+    syscall_thread_exit();
 }
 
 void TCB::dispatch() {
     TCB* old = running;
-    if (old->state == RUNNING)
+    if (old->state == State::RUNNABLE)
         Scheduler::put(old);
     running = Scheduler::get();
-    running->setState(RUNNING);
+    running->setState(State::RUNNABLE);
 
-    timeSliceCounter = 0;
+    time_slice_counter = 0;
     RiscV::setPrivilegeLevel();
     conswtch(&old->context, &running->context);
 }
@@ -51,7 +52,7 @@ void TCB::syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4)
 
     TCB *temp = new TCB(start_routine, args, stack_space);
 
-    (*thread_handle) = newTCB;
+    (*thread_handle) = temp;
 
     if (temp) {
         temp->start();
@@ -59,4 +60,19 @@ void TCB::syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4)
     } else {
         RiscV::w_a0(-1);
     }
+}
+
+void TCB::syscall_thread_dispatch()
+{
+    TCB *old = running;
+    if (!old->isFinished()) { Scheduler::put(old); }
+    running = Scheduler::get();
+
+    TCB::conswtch(&old->context, &running->context);
+}
+
+void TCB::syscall_thread_exit(){
+    running->setState(State::FINISHED);
+    dispatch();
+    RiscV::w_a0(0);
 }

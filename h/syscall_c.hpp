@@ -2,7 +2,6 @@
 #define _syscall_c_hpp_
 
 #include "../h/riscv.hpp"
-#include "../h/memoryallocator.hpp"
 
 
 void* mem_alloc(size_t size);
@@ -13,6 +12,6 @@ typedef _thread* thread_t;
 
 int thread_create(thread_t* handle, void(*start_routine)(void*), void* arg);
 int thread_exit();
-int thread_dispatch();
+void thread_dispatch();
 
 #endif
