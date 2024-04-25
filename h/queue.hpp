@@ -5,26 +5,14 @@
 class Queue{
 public:
 
-    struct TCBS{
-        TCB* tcb;
-        TCBS* next;
+    TCB *head, *tail;
 
-        TCBS(TCB* p):tcb(p),next(nullptr) {}
-
-        void* operator new(size_t size){
-            uint64 ssize = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
-            return MemoryAllocator::kernel_mem_alloc(ssize);
-        }
-        void operator delete(void* p){MemoryAllocator::kernel_mem_free(p);}
-    };  
-    TCBS *head, *tail;
-    
     Queue():head(0),tail(0){}
 
 
-    void put(TCBS* t);
+    void put(TCB* t);
     TCB* pop();
-    TCB* get(TCBS* t){return t->tcb;}
+    TCB* front(){return head;}
 
 };
 

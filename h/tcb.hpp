@@ -30,6 +30,7 @@ public:
     };
     Status status = PRIVILEGED; // Status
 
+    TCB* next = nullptr;
     
 
     TCB(Body body, void *args,

@@ -8,7 +8,7 @@ Queue Scheduler::q;
 void Scheduler::put(TCB *tcb)
 {
     tcb->setState(TCB::State::READY);
-    q.put(new Queue::TCBS(tcb));
+    q.put(tcb);
 }
 
 TCB* Scheduler::get(){
