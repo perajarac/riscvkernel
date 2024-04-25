@@ -23,8 +23,11 @@ int mem_free(void* addr)
     return (int)ret;
 }
 int thread_create(thread_t* handle, void (*start_routine)(void*), void* arg) {
-    void* stack_space = mem_alloc(DEFAULT_STACK_SIZE);
-    if (!stack_space) return -1;
+    uint64 ssize = (DEFAULT_STACK_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
+
+    void* stack_space = MemoryAllocator::kernel_mem_alloc(ssize);
+    if (!stack_space) 
+        return -1;
 
     __asm__ volatile("mv a4, %0" : : "r" ((uint64)stack_space));
     __asm__ volatile("mv a3, %0" : : "r" ((uint64)arg));

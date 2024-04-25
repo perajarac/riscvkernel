@@ -11,7 +11,8 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
         //unutrasnji
         if (scause == SCAUSE_IS || scause == SCAUSE_LAF || scause == SCAUSE_WAF) 
         { 
-            return; //TODO:thread_exit;
+            TCB::syscall_thread_exit();
+            return; 
         }
 
         if (scause == SCAUSE_USER || scause == SCAUSE_SYSTEM){

@@ -64,11 +64,7 @@ void TCB::syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4)
 
 void TCB::syscall_thread_dispatch()
 {
-    TCB *old = running;
-    if (!old->isFinished()) { Scheduler::put(old); }
-    running = Scheduler::get();
-
-    TCB::conswtch(&old->context, &running->context);
+    dispatch();
 }
 
 void TCB::syscall_thread_exit(){
