@@ -4,6 +4,9 @@
 #include "../lib/hw.h"
 #include "../h/printf.hpp"
 
+#define BLOCKS_FOR_STACK_SIZE (DEFAULT_STACK_SIZE/MEM_BLOCK_SIZE)
+
+
 struct FreeMemory
 {
     size_t size;

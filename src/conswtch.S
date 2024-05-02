@@ -7,5 +7,4 @@ _ZN3TCB8conswtchEPNS_7ContextES1_:
 
     ld sp, 0(a1)
     ld ra, 8(a1)
-
     ret

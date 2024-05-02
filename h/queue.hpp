@@ -5,14 +5,14 @@
 class Queue{
 public:
 
-    TCB *head, *tail;
-
-    Queue():head(0),tail(0){}
+    static TCB *head, *tail;
 
 
-    void put(TCB* t);
-    TCB* pop();
-    TCB* front(){return head;}
+    static void put(TCB* t);
+    static TCB* pop();
+    static TCB* front(){return head;}
+
+    static void printQueue();
 
 };
 

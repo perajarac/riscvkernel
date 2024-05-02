@@ -17,7 +17,7 @@ public:
 
     Body body;
     void *args;
-    void *stack_space;
+    char *stack_space;
 
     uint64 time_slice;
     static uint64 time_slice_counter;
@@ -28,14 +28,14 @@ public:
         USER,
         PRIVILEGED
     };
-    Status status = PRIVILEGED; // Status
+    Status status; // Status
 
     TCB* next = nullptr;
     
 
     TCB(Body body, void *args,
-        void *stack_space = MemoryAllocator::kernel_mem_alloc((DEFAULT_STACK_SIZE + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE), 
-        uint64 time_slice = DEFAULT_TIME_SLICE);
+        char *stack_space =(char*)MemoryAllocator::kernel_mem_alloc(BLOCKS_FOR_STACK_SIZE), 
+        uint64 time_slice = DEFAULT_TIME_SLICE, Status status = PRIVILEGED);
     ~TCB(){MemoryAllocator::kernel_mem_free(stack_space);}
 
     enum State
@@ -55,8 +55,6 @@ public:
     static void dispatch();
     //TODO: static void timer_interrupt();
 
-    static void join(TCB *thread);
-
     uint64 sleep_limit = 0;
     void set_sleep_time(uint64 time) { sleep_limit = time; }
 
@@ -74,7 +72,6 @@ public:
     // system call handlers
     static void syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4);
     static void syscall_thread_exit();
-    static void syscall_thread_dispatch();
 
     friend class RiscV;
 };

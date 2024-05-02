@@ -2,17 +2,18 @@
 
 void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
 {
-    volatile uint64 scause = RiscV::r_scause();
+    uint64 volatile scause = RiscV::r_scause();
 
     if(scause & SCAUSE_INTTERUPT){
+        console_handler();
         return;
         //TODO: obrada spoljasnjeg prekidad
     }else{
         //unutrasnji
         if (scause == SCAUSE_IS || scause == SCAUSE_LAF || scause == SCAUSE_WAF) 
         { 
+            printf("INSTRUCTION FAULT %d",(void*)r_stval());
             TCB::syscall_thread_exit();
-            return; 
         }
 
         if (scause == SCAUSE_USER || scause == SCAUSE_SYSTEM){
@@ -25,7 +26,7 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
                 case(0x02): w_a0((uint64)MemoryAllocator::kernel_mem_free((void *)a1)); break;
                 case(0x11): TCB::syscall_thread_create(a1,a2,a3,a4);break;
                 case(0x12): TCB::syscall_thread_exit();break;
-                case(0x13): TCB::syscall_thread_dispatch();break;
+                case(0x13): TCB::dispatch(); break;
                 case(0x21): break;
                 case(0x22): break;
                 case(0x23): break;
@@ -38,8 +39,10 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
                 default: break;
             }
 
-            w_sstatus(sstatus);
-            w_sepc(sepc);            
+            RiscV::w_sstatus(sstatus);
+            RiscV::w_sepc(sepc);
+
+           
         }
     }
 }
@@ -54,6 +57,7 @@ void RiscV::popSppSpie(){
     __asm__ volatile("sret");
 }
 
+//If the stattus was privileged it sets the status back, otherwise it sets the status in user mode
 void RiscV::setPrivilegeLevel() {
     if (TCB::running->status == TCB::Status::PRIVILEGED)
         ms_sstatus(SSTATUS_SPP);

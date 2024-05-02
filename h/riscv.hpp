@@ -1,8 +1,8 @@
 #ifndef riscv_h_
 #define riscv_h_
 #include "../lib/hw.h"
-#include "../h/printf.hpp"
 #include "../h/memoryallocator.hpp"
+#include "../h/printf.hpp"
 #include "../h/tcb.hpp"
 
 #define SCAUSE_INTTERUPT (1L << 63) // Upper scause bit(decides if interrupt is outside or inside)
