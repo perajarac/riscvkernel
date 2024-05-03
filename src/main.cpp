@@ -1,7 +1,6 @@
 #include "../h/syscall_c.hpp"
 
-TCB* systemThread = nullptr;
-TCB* userThread = nullptr;
+
 
 volatile bool finishedA = false;
 volatile bool finishedB = false;
@@ -21,8 +20,7 @@ void workerBodyA(void* arg)
     for (; i < 3; i++)
     {
         printf("A:");
-        uint64 temp = fibonacci(i);
-        printf("%d", &temp);
+        printf("%d\n", &i);
     }
 
     printf("A yield");
@@ -39,7 +37,7 @@ void workerBodyA(void* arg)
 
     uint64 result = fibonacci(20);
     printf("A fibonacci: ");
-    printf("%lu", &result);
+    printf("%l", &result);
     __putc('\n');
     for (; i < 6; i++)
     {
@@ -67,10 +65,10 @@ void workerBodyB(void* arg)
     thread_dispatch();
 
 
-    uint64 result = fibonacci(23);
-    printf("B: fibonaci=");
-    printf("%lu",&result);
-    __putc('\n');
+    // uint64 result = fibonacci(23);
+    // printf("B: fibonaci=");
+    // printf("%lu",&result);
+    // __putc('\n');
 
     for (; i < 16; i++)
     {
@@ -93,26 +91,22 @@ void workerBodyB(void* arg)
 void main() {
     
     MemoryAllocator::initialize();
-    RiscV::w_stvec((uint64) RiscV::handleTrap);
-    //RiscV::mc_sstatus(SSTATUS_SPP);
+    RiscV::w_stvec((uint64) RiscV::supervisorTrap);
     thread_t threads[2];
+    thread_t main;
+    thread_create(&main, nullptr, nullptr);
+    TCB::running = main;
     thread_create(&threads[0], workerBodyA, nullptr);
     printf("ThreadA created\n");
-    Scheduler::print();
     thread_create(&threads[1], workerBodyB, nullptr);
     printf("ThreadB created\n");
-    Scheduler::print();
-    // systemThread = new TCB(0, 0, 0, 0);
-    // systemThread->status = TCB::Status::PRIVILEGED;
-    // TCB::running = systemThread;
-    // TCB::running->setState(TCB::State::RUNNABLE);
-    // userThread = new TCB(userMain, nullptr);
-    // userThread->status = TCB::Status::USER;
-    // userThread->start();
+
     while (!(finishedA&&finishedB))
     {
         thread_dispatch();
     }
+
+
 
     printf("gotovo");
 }

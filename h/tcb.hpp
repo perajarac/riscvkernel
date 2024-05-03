@@ -28,13 +28,10 @@ public:
         USER,
         PRIVILEGED
     };
-    Status status; // Status
-
-    TCB* next = nullptr;
-    
+    Status status; // Status    
 
     TCB(Body body, void *args,
-        char *stack_space =(char*)MemoryAllocator::kernel_mem_alloc(BLOCKS_FOR_STACK_SIZE), 
+        void *stack_space =MemoryAllocator::kernel_mem_alloc(BLOCKS_FOR_STACK_SIZE), 
         uint64 time_slice = DEFAULT_TIME_SLICE, Status status = PRIVILEGED);
     ~TCB(){MemoryAllocator::kernel_mem_free(stack_space);}
 
@@ -53,7 +50,7 @@ public:
     void start();
     static void set_runner();
     static void dispatch();
-    //TODO: static void timer_interrupt();
+    static void yield();
 
     uint64 sleep_limit = 0;
     void set_sleep_time(uint64 time) { sleep_limit = time; }

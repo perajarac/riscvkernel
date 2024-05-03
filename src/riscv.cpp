@@ -19,6 +19,9 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
         if (scause == SCAUSE_USER || scause == SCAUSE_SYSTEM){
             uint64 volatile sepc = r_sepc() + 4;
             uint64 volatile sstatus = r_sstatus();
+            RiscV::w_sepc(sepc);
+
+
 
 
             switch(op){
@@ -40,9 +43,6 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
             }
 
             RiscV::w_sstatus(sstatus);
-            RiscV::w_sepc(sepc);
-
-           
         }
     }
 }

@@ -13,7 +13,7 @@ public:
         Scheduler& instance = Scheduler::getInstance();
         TCB_Node* temp = instance.head;
         while(temp!= nullptr){
-            printf("%l", temp->tcb);
+            printf("%l ", temp->tcb);
             temp = temp->next;
         }
         printf("\n");

@@ -1,6 +1,4 @@
 #include "../h/scheduler.hpp"
-#include "../h/queue.hpp"
-#include "../h/tcb.hpp"
 
 
 Scheduler &Scheduler::getInstance() {

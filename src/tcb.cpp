@@ -1,30 +1,38 @@
-#include "../h/tcb.hpp" 
+#include "../h/tcb.hpp"
+#include "../h/syscall_c.hpp" 
 
 TCB* TCB::running = nullptr;
 uint64 TCB::time_slice_counter = 0;
 
-TCB::TCB(Body body, void *args, char* stack_space, uint64 timeSlice, Status status):
+TCB::TCB(Body body, void *args, void* stack_space, uint64 timeSlice, Status status):
         body(body), args(args),
-        stack_space(stack_space),
+        stack_space((char*)stack_space),
         time_slice(timeSlice),
         context({
-            (uint64) ((char*)stack_space + DEFAULT_STACK_SIZE), //stack goes down to the beginning of the pointer
-            (uint64) TCB::set_runner
+            (uint64)(this->stack_space + DEFAULT_STACK_SIZE), //stack goes down to the beginning of the pointer
+            (uint64)&set_runner
         }),
         status(status) {
-                Scheduler::put(this);
+            this->start();
         }
 
 void TCB::start(){
     Scheduler::put(this);
 }
 
-
 void TCB::set_runner() {
     RiscV::popSppSpie();
     running->body(running->args);
     running->setState(State::FINISHED);
     dispatch();
+}
+
+void TCB::yield() {
+    uint64 volatile sepc = RiscV::r_sepc();
+    uint64 volatile sstatus = RiscV::r_sstatus();
+    TCB::dispatch();
+    RiscV::w_sstatus(sstatus);
+    RiscV::w_sepc(sepc);
 }
 
 void TCB::dispatch() {
@@ -34,12 +42,11 @@ void TCB::dispatch() {
         if (!old->isFinished())
             Scheduler::put(old);
     }
-    if(old == Scheduler::getHead()){
-        Scheduler::bugg(); //fixing bug that old and geted thread are same beacause lack of threads
-    }
     TCB::running = Scheduler::get();
-    printf("%l ", old);
-    printf("%l \n", running);
+    if(!running){
+        running = old;
+        return;
+    } //if scheduler is empty return(nothing to switch with)
 
 
     time_slice_counter = 0;
@@ -60,15 +67,13 @@ void TCB::syscall_thread_create(uint64 r1, uint64 r2, uint64 r3, uint64 r4)
     TCB** thread_handle = (TCB**)r1;
     Body start_routine = (Body)r2;
     void* args = (void*)r3;
-    char* stack_space = (char*)r4;
+    void* stack_space = (void*)r4;
 
     TCB *temp = new TCB(start_routine, args, stack_space);
 
     *thread_handle = temp;
 
     if (temp) {
-        if(!running)
-            running = temp;
         RiscV::w_a0(0);
     } else {
         RiscV::w_a0(-1);
@@ -81,6 +86,6 @@ void TCB::syscall_thread_exit(){
         return;
     }
     running->setState(State::FINISHED);
-    dispatch();
+    yield();
     RiscV::w_a0(0);
 }
