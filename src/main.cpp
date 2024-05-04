@@ -106,6 +106,12 @@ void main() {
         thread_dispatch();
     }
 
+    int* a = new int;
+    * a = 2;
+    int* b = new int[20];
+    delete a;
+    delete[] b;
+
 
 
     printf("gotovo");
