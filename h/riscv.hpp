@@ -3,7 +3,8 @@
 #include "../lib/hw.h"
 #include "../h/memoryallocator.hpp"
 #include "../h/printf.hpp"
-#include "../h/tcb.hpp"
+#include "../h/kernelsemaphore.hpp"
+
 
 #define SCAUSE_INTTERUPT (1L << 63) // Upper scause bit(decides if interrupt is outside or inside)
 #define SSTATUS_SPP (1L << 8)       // Previous mode, 1=Supervisor, 0=User

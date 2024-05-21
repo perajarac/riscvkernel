@@ -39,8 +39,9 @@ void TCB::dispatch() {
 
     TCB* old = TCB::running;
     if(old){
-        if (!old->isFinished())
+        if (!old->isFinished() && old->getState() != TCB::State::BLOCKED) {
             Scheduler::put(old);
+        }
     }
     TCB::running = Scheduler::get();
     if(!running){

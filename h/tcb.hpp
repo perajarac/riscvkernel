@@ -13,6 +13,7 @@ public:
         uint64 ra;
     };
 
+    int sem_ret = 0;
     using Body = void (*)(void *);
 
     Body body;
@@ -38,6 +39,7 @@ public:
     enum State
     {
         CREATED,
+        BLOCKED, // blocked
         READY,
         RUNNABLE, // runnable
         SUSPENDED,
@@ -56,6 +58,7 @@ public:
     void set_sleep_time(uint64 time) { sleep_limit = time; }
 
     void setState(State s) { state = s; }
+    State getState() const { return state; }
     bool isFinished() {return state == FINISHED; }
 
 
