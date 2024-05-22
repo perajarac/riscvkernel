@@ -30,15 +30,15 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
                 case(0x11): TCB::syscall_thread_create(a1,a2,a3,a4);break;
                 case(0x12): TCB::syscall_thread_exit();break;
                 case(0x13): TCB::dispatch(); break;
-                case(0x21): break;
-                case(0x22): break;
-                case(0x23): break;
-                case(0x24): break;
+                case(0x21): w_a0(KernelSemaphore::kernel_sem_open(a1,a2)); break;
+                case(0x22): w_a0(KernelSemaphore::kernel_sem_close(a1)); break;
+                case(0x23): w_a0(KernelSemaphore::kernel_sem_wait(a1));break;
+                case(0x24): w_a0(KernelSemaphore::kernel_sem_signal(a1)); break;
                 case(0x25): break;
-                case(0x26): break;
+                case(0x26): w_a0(KernelSemaphore::kernel_sem_trywait(a1)); break;
                 case(0x31): break;
-                case(0x41): break;
-                case(0x42): break;
+                case(0x41): w_a0(__getc()); break;
+                case(0x42): __putc(a1); break;
                 default: break;
             }
 

@@ -46,13 +46,101 @@ int thread_exit()
      __asm__ volatile("mv a0, %0" : : "r" (0x12));
     __asm__ volatile ("ecall");
 
-    uint64 ret;
+    uint64 volatile ret;
     __asm__ volatile("mv %0, a0" : "=r"(ret));
     return (int)ret;
 }
 
-
 void thread_dispatch() {
     __asm__ volatile("mv a0, %0" : : "r" (0x13));
     __asm__ volatile("ecall");
+}
+
+int sem_open(sem_t *handle, unsigned init)
+{
+    __asm__ volatile("mv a2, %0" : : "r" ((uint64)init));
+    __asm__ volatile("mv a1, %0" : : "r" ((uint64)handle));
+    __asm__ volatile("mv a0, %0" : : "r" (0x21));
+
+    __asm__ volatile("ecall");
+
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (int)ret;
+    
+}
+
+int sem_close(sem_t handle)
+{
+    __asm__ volatile("mv a1, %0" : : "r" ((uint64)handle));
+    __asm__ volatile("mv a0, %0" : : "r" (0x22));
+
+    __asm__ volatile("ecall");
+
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (int)ret;
+}
+
+int sem_wait(sem_t id)
+{
+    __asm__ volatile("mv a1, %0" : : "r" ((uint64)id));
+    __asm__ volatile("mv a0, %0" : : "r" (0x23));
+
+    __asm__ volatile("ecall");
+
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (int)ret;
+    }
+
+int sem_signal(sem_t id)
+{
+    __asm__ volatile("mv a1, %0" : : "r" ((uint64)id));
+    __asm__ volatile("mv a0, %0" : : "r" (0x24));
+
+    __asm__ volatile("ecall");
+
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (int)ret;
+    }
+
+int sem_trywait(sem_t id)
+{
+    __asm__ volatile("mv a1, %0" : : "r" ((uint64)id));
+    __asm__ volatile("mv a0, %0" : : "r" (0x26));
+
+    __asm__ volatile("ecall");
+
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (int)ret;
+}
+
+
+char getc()
+{
+    __asm__ volatile("mv a0, %0" : : "r" (0x41));
+
+    __asm__ volatile("ecall");
+
+    uint64 volatile ret;
+    __asm__ volatile("mv %0, a0" : "=r" (ret));
+    return (char)ret;
+}
+
+void putc(char c){
+    __asm__ volatile("mv a1, %0" : : "r" ((uint64)c));
+    __asm__ volatile("mv a0, %0" : : "r" (0x42));
+    __asm__ volatile("ecall");
+}
+
+
+int sem_timedwait(sem_t id, time_t timeout){
+    return 0;
+}
+
+int time_sleep(time_t){
+    return 0;
 }

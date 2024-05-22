@@ -44,10 +44,7 @@ void TCB::dispatch() {
         }
     }
     TCB::running = Scheduler::get();
-    if(!running){
-        running = old;
-        return;
-    } //if scheduler is empty return(nothing to switch with)
+    if(old->getState() == TCB::State::FINISHED) delete old;
 
 
     time_slice_counter = 0;

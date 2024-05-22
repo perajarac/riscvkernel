@@ -61,6 +61,8 @@ public:
     State getState() const { return state; }
     bool isFinished() {return state == FINISHED; }
 
+    void setStatus(Status status){this->status = status; }
+
 
     //switch context
     static void conswtch(TCB::Context *old, TCB::Context *neww);
