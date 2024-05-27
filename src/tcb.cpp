@@ -1,5 +1,5 @@
 #include "../h/tcb.hpp"
-#include "../h/syscall_c.hpp" 
+#include "../h/syscall_c.h" 
 
 TCB* TCB::running = nullptr;
 uint64 TCB::time_slice_counter = 0;

@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 void* mem_alloc(size_t size) {
     uint64 volatile ssize = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;

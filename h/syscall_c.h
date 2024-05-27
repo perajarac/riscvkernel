@@ -1,5 +1,5 @@
-#ifndef _syscall_c_hpp_
-#define _syscall_c_hpp_
+#ifndef _syscall_c_h_
+#define _syscall_c_h_
 
 #include "../h/riscv.hpp"
 

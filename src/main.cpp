@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_cpp.hpp"
 
 extern void userMain();
 
@@ -20,7 +20,7 @@ void main() {
     thread_create(&user_main, userMainWrapper, nullptr);
     user_main->setStatus(TCB::Status::USER);
 
-    while(user_main->isFinished()) 
+    while(!user_main->isFinished()) 
     {
         thread_dispatch();
     }
