@@ -25,9 +25,18 @@ Thread::Thread(void (*body)(void *), void *arg):myHandle(nullptr), body(body), a
 
 Thread::~Thread(){}
 
+void Thread::wrapper(void *arg) {
+    if(arg)((Thread*)arg)->run();
+}
+
 int Thread::start(){
     if(this->myHandle != nullptr) return -1;
-    return thread_create(&this->myHandle, this->body, this->arg);   
+    if(body == nullptr){
+         return thread_create(&this->myHandle, Thread::wrapper, this);  
+    }
+    else {
+        return thread_create(&myHandle, body, arg);
+    }
 }
 
 void Thread::dispatch()

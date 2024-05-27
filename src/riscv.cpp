@@ -4,11 +4,17 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
 {
     uint64 volatile scause = RiscV::r_scause();
 
-    if(scause & SCAUSE_INTTERUPT){
+        
+    if (scause == 0x8000000000000001UL){
+        mc_sip(1<<1);
+        return;
+    }else if (scause == 0x8000000000000009UL){
         console_handler();
         return;
+    }
+        
         //TODO: obrada spoljasnjeg prekidad
-    }else{
+    if (scause == 0x0000000000000008UL || scause == 0x0000000000000009UL){
         //unutrasnji
         if (scause == SCAUSE_IS || scause == SCAUSE_LAF || scause == SCAUSE_WAF) 
         { 
@@ -20,9 +26,6 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
             uint64 volatile sepc = r_sepc() + 4;
             uint64 volatile sstatus = r_sstatus();
             RiscV::w_sepc(sepc);
-
-
-
 
             switch(op){
                 case(0x01): w_a0((uint64)MemoryAllocator::kernel_mem_alloc(a1)); break;
@@ -40,7 +43,7 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
                 case(0x41): w_a0(__getc()); break;
                 case(0x42): __putc(a1); break;
                 default: break;
-            }
+            }   
 
             RiscV::w_sstatus(sstatus);
         }
