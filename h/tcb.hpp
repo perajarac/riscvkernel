@@ -20,9 +20,6 @@ public:
     void *args;
     char *stack_space;
 
-    uint64 time_slice;
-    static uint64 time_slice_counter;
-
     Context context;
 
     enum Status{
@@ -33,7 +30,7 @@ public:
 
     TCB(Body body, void *args,
         void *stack_space =MemoryAllocator::kernel_mem_alloc(BLOCKS_FOR_STACK_SIZE), 
-        uint64 time_slice = DEFAULT_TIME_SLICE, Status status = PRIVILEGED);
+        Status status = USER);
     ~TCB(){MemoryAllocator::kernel_mem_free(stack_space);}
 
     enum State

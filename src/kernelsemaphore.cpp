@@ -2,8 +2,9 @@
 
 void KernelSemaphore::block(){
     SNode* temp = new SNode();
-    temp->blocked = TCB::running;
+    
     temp->next = nullptr;
+    temp->blocked = TCB::running;
 
     if(head == nullptr) {
         head = temp;
@@ -47,10 +48,6 @@ int KernelSemaphore::close(KernelSemaphore* ks){
     return 0;
 }
 
-KernelSemaphore::~KernelSemaphore(){
-    KernelSemaphore::close(this);
-}
-
 void* KernelSemaphore::operator new(size_t size){
     uint64 ssize = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
     return MemoryAllocator::kernel_mem_alloc(ssize);
@@ -63,8 +60,8 @@ void KernelSemaphore::operator delete(void* ptr){
 int KernelSemaphore::kernel_sem_open(uint64 handl, uint64 init)
 {
     KernelSemaphore** handle = (KernelSemaphore **)handl;
-    *handle = new KernelSemaphore((unsigned)init);
-    if(handle){
+    (*handle) = new KernelSemaphore((unsigned)init);
+    if(*handle){
         return 0;
     }else{
         return -1;
@@ -75,15 +72,16 @@ int KernelSemaphore::kernel_sem_close(uint64 handl)
 {
     KernelSemaphore* handle = (KernelSemaphore*)handl;
     if(handle == nullptr) return -1;
-    return KernelSemaphore::close(handle);
+    int ret = KernelSemaphore::close(handle);
+    delete handle;
+    return ret;
 }
 
 int KernelSemaphore::kernel_sem_wait(uint64 i)
 {
     KernelSemaphore* id = (KernelSemaphore*)i;
-    if(id == nullptr) return -1;
-    id->wait();
-    return 0;
+    return id->wait();
+    
 }
 
 int KernelSemaphore::kernel_sem_signal(uint64 i)

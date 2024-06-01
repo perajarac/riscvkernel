@@ -2,12 +2,10 @@
 #include "../h/syscall_c.h" 
 
 TCB* TCB::running = nullptr;
-uint64 TCB::time_slice_counter = 0;
 
-TCB::TCB(Body body, void *args, void* stack_space, uint64 timeSlice, Status status):
+TCB::TCB(Body body, void *args, void* stack_space,Status status):
         body(body), args(args),
         stack_space((char*)stack_space),
-        time_slice(timeSlice),
         context({
             (uint64)(this->stack_space + DEFAULT_STACK_SIZE), //stack goes down to the beginning of the pointer
             (uint64)&set_runner
@@ -24,7 +22,7 @@ void TCB::set_runner() {
     RiscV::popSppSpie();
     running->body(running->args);
     running->setState(State::FINISHED);
-    dispatch();
+    thread_exit();
 }
 
 void TCB::yield() {
@@ -46,8 +44,6 @@ void TCB::dispatch() {
     TCB::running = Scheduler::get();
     if(old->getState() == TCB::State::FINISHED) delete old;
 
-
-    time_slice_counter = 0;
     TCB::conswtch(&old->context, &running->context);
 }
 

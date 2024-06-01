@@ -30,7 +30,6 @@ private:
 public:
 
     KernelSemaphore(int val):val(val) {}
-    ~KernelSemaphore();
     int getVal() const { return val; }
     
     int wait();
