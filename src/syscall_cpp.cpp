@@ -32,7 +32,7 @@ void Thread::wrapper(void *arg) {
 int Thread::start(){
     if(this->myHandle != nullptr) return -1;
     if(body == nullptr){
-         return thread_create(&this->myHandle, Thread::wrapper, this);  
+         return thread_create(&myHandle, Thread::wrapper, this);  
     }
     else {
         return thread_create(&myHandle, body, arg);

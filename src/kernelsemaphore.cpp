@@ -31,9 +31,9 @@ void KernelSemaphore::unblock(){
 }
 
 int KernelSemaphore::wait(){
-    TCB::running->sem_ret = 0;
+    TCB::running->setSemRet(0);
     if(--val<0)this->block();
-    return TCB::running->sem_ret;
+    return TCB::running->getSemRet();
 }
 
 void KernelSemaphore::signal(){
@@ -42,7 +42,7 @@ void KernelSemaphore::signal(){
 
 int KernelSemaphore::close(KernelSemaphore* ks){
     while(ks->head){
-        ks->head->blocked->sem_ret = -1;
+        ks->head->blocked->setSemRet(-1);
         ks->unblock();
     }
     return 0;

@@ -5,28 +5,6 @@
 class TCB;
 
 class KernelSemaphore{
-private:
-
-    int val = 0;
-    void block();
-    void unblock();
-
-    struct SNode{
-        TCB* blocked;
-        SNode* next;
-
-        void* operator new(size_t size){
-            uint64 ssize = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
-            return MemoryAllocator::kernel_mem_alloc(ssize);
-        }
-        void operator delete(void* ptr){
-            MemoryAllocator::kernel_mem_free(ptr);
-        }
-    };
-
-    SNode* head = nullptr;
-    SNode* tail = nullptr;
-
 public:
 
     KernelSemaphore(int val):val(val) {}
@@ -45,5 +23,25 @@ public:
     static int kernel_sem_signal(uint64);
     static int kernel_sem_trywait(uint64);
 
+private:
+
+    int val = 0;
+    void block();
+    void unblock();
+
+    struct SNode{
+        TCB* blocked;
+        SNode* next;
+
+        void* operator new(size_t size){
+            uint64 ssize = (size + MEM_BLOCK_SIZE - 1) / MEM_BLOCK_SIZE;
+            return MemoryAllocator::kernel_mem_alloc(ssize);
+        }
+        void operator delete(void* ptr){
+            MemoryAllocator::kernel_mem_free(ptr);
+        }
+    };
+    SNode* head = nullptr;
+    SNode* tail = nullptr;
 };
 #endif

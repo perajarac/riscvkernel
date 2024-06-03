@@ -7,13 +7,11 @@ void userMainWrapper(void* o) {
     userMain();
 }
 
-
 void main() {
     MemoryAllocator::initialize();
     RiscV::w_stvec((uint64) RiscV::supervisorTrap);
     thread_t user_main;
     thread_t main;
-
 
     thread_create(&main, nullptr, nullptr);
     main->setStatus(TCB::Status::PRIVILEGED);
@@ -22,11 +20,8 @@ void main() {
     thread_create(&user_main, userMainWrapper, nullptr);
     user_main->setStatus(TCB::Status::USER);
 
-    
-
     while(!user_main->isFinished()) 
     {
         thread_dispatch();
     }
-
 }

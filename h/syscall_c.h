@@ -3,7 +3,6 @@
 
 #include "../h/riscv.hpp"
 
-
 void* mem_alloc(size_t size);
 int mem_free (void*);
 
@@ -30,7 +29,6 @@ int sem_timedwait(
  sem_t id,
  time_t timeout
 );
-
 
 const int EOF = -1;
 char getc();

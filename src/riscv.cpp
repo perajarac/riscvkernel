@@ -52,7 +52,7 @@ void RiscV::handleTrap(uint64 op, uint64 a1, uint64 a2, uint64 a3,uint64 a4)
 }
 
 void RiscV::popSppSpie(){
-    if(TCB::running->status == TCB::Status::USER){
+    if(TCB::running->getStatus() == TCB::Status::USER){
         RiscV::mc_sstatus(SSTATUS_SPP);
     }else{
         RiscV::ms_sstatus(SSTATUS_SPP);
@@ -63,7 +63,7 @@ void RiscV::popSppSpie(){
 
 //If the stattus was privileged it sets the status back, otherwise it sets the status in user mode
 void RiscV::setPrivilegeLevel() {
-    if (TCB::running->status == TCB::Status::PRIVILEGED)
+    if (TCB::running->getStatus() == TCB::Status::PRIVILEGED)
         ms_sstatus(SSTATUS_SPP);
     else
         mc_sstatus(SSTATUS_SPP);

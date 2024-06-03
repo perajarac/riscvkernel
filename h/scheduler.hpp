@@ -9,25 +9,6 @@ public:
     static void put(TCB* tcb);
     static TCB* get();
 
-    static void print(){
-        Scheduler& instance = Scheduler::getInstance();
-        TCB_Node* temp = instance.head;
-        while(temp!= nullptr){
-            printf("%l ", temp->tcb);
-            temp = temp->next;
-        }
-        printf("\n");
-    }
-
-    static TCB* getHead(){
-        Scheduler& instance = Scheduler::getInstance();
-        return instance.head->tcb;
-    }
-
-    static void bugg(){
-        Scheduler& instance = Scheduler::getInstance();
-        instance.head = instance.head->next;
-    }
 private:
     struct TCB_Node{
         TCB* tcb;
@@ -52,7 +33,6 @@ private:
     Scheduler(Scheduler&) = delete;
     Scheduler(Scheduler&&) = delete;
     Scheduler() {}
-
 
     static Scheduler& getInstance();
 

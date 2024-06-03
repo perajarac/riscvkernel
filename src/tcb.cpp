@@ -8,7 +8,7 @@ TCB::TCB(Body body, void *args, void* stack_space,Status status):
         stack_space((char*)stack_space),
         context({
             (uint64)(this->stack_space + DEFAULT_STACK_SIZE), //stack goes down to the beginning of the pointer
-            (uint64)&set_runner
+            (uint64)&setRunner
         }),
         status(status) {
             this->start();
@@ -18,9 +18,13 @@ void TCB::start(){
     Scheduler::put(this);
 }
 
-void TCB::set_runner() {
+void TCB::setBody(){
+    this->body(this->args);
+}
+
+void TCB::setRunner() {
     RiscV::popSppSpie();
-    running->body(running->args);
+    running->setBody();
     running->setState(State::FINISHED);
     thread_exit();
 }

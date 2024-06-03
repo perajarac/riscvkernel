@@ -13,25 +13,12 @@ public:
         uint64 ra;
     };
 
-    int sem_ret = 0;
     using Body = void (*)(void *);
-
-    Body body;
-    void *args;
-    char *stack_space;
-
-    Context context;
 
     enum Status{
         USER,
         PRIVILEGED
     };
-    Status status; // Status    
-
-    TCB(Body body, void *args,
-        void *stack_space =MemoryAllocator::kernel_mem_alloc(BLOCKS_FOR_STACK_SIZE), 
-        Status status = USER);
-    ~TCB(){MemoryAllocator::kernel_mem_free(stack_space);}
 
     enum State
     {
@@ -39,26 +26,33 @@ public:
         BLOCKED, // blocked
         READY,
         RUNNABLE, // runnable
-        SUSPENDED,
-        SLEEPING,
         FINISHED // blocked
     };
-    State state = CREATED;
 
     static TCB *running;
+
+    TCB(Body body, void *args,
+        void *stack_space =MemoryAllocator::kernel_mem_alloc(BLOCKS_FOR_STACK_SIZE), 
+        Status status = USER);
+    ~TCB(){MemoryAllocator::kernel_mem_free(stack_space);}
+
     void start();
-    static void set_runner();
+    static void setRunner();
     static void dispatch();
     static void yield();
 
-    uint64 sleep_limit = 0;
-    void set_sleep_time(uint64 time) { sleep_limit = time; }
+    void setSemRet(int ret) {this->semRet = ret;}
+    int getSemRet() const {return this->semRet;}
 
     void setState(State s) { state = s; }
     State getState() const { return state; }
     bool isFinished() {return state == FINISHED; }
 
+    void setBody();
+    void setArgs(void* args) { this->args = args; }
+
     void setStatus(Status status){this->status = status; }
+    Status getStatus(){return this->status;}
 
 
     //switch context
@@ -73,6 +67,21 @@ public:
     static void syscall_thread_exit();
 
     friend class RiscV;
+    /*------------------------------------------------------------------------*/
+private:
+    int semRet = 0;
+
+    Body body;
+    void *args;
+    char *stack_space;
+
+    Context context;
+
+    Status status; // Status    
+
+    State state = CREATED;
+
+
 };
 
 #endif
