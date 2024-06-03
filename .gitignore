@@ -4,6 +4,3 @@
 .gdbinit
 kernel
 kernel.asm
-Makefile
-/lib
-/test
